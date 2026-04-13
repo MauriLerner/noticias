@@ -1,657 +1,93 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PulseFin — Noticias financieras en tiempo real</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Dashboard Conflicto EE.UU - Irán</title>
 <style>
-:root {
-  --bg: #080808;
-  --s1: #111;
-  --s2: #181818;
-  --s3: #222;
-  --border: rgba(255,255,255,0.06);
-  --border2: rgba(255,255,255,0.11);
-  --text: #edeae4;
-  --muted: #5a5750;
-  --muted2: #8a8780;
-  --accent: #c8f53e;
-  --accent-bg: rgba(200,245,62,0.09);
-  --red: #f05555;
-  --red-bg: rgba(240,85,85,0.1);
-  --green: #50e890;
-  --green-bg: rgba(80,232,144,0.09);
-  --blue: #5aaff5;
-  --blue-bg: rgba(90,175,245,0.09);
-  --amber: #f5b840;
-  --amber-bg: rgba(245,184,64,0.09);
-  --purple: #b87df5;
-  --purple-bg: rgba(184,125,245,0.09);
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
 body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  font-size: 14px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0b0f1a;
+    color: #e6e9f0;
 }
-
-/* HEADER */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 28px;
-  height: 52px;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(8,8,8,0.97);
-  backdrop-filter: blur(16px);
+.header {
+    padding: 20px;
+    background: #111827;
+    font-size: 24px;
+    font-weight: bold;
 }
-.logo {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 20px;
-  letter-spacing: -0.5px;
-  color: var(--text);
+.container {
+    display: flex;
 }
-.logo em { font-style: normal; color: var(--accent); }
-.header-right { display: flex; align-items: center; gap: 14px; }
-.live {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase;
-  color: var(--muted2);
+.main {
+    flex: 3;
+    padding: 20px;
 }
-.live-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent);
-  animation: blink 2s ease-in-out infinite;
+.sidebar {
+    flex: 1;
+    background: #0f172a;
+    padding: 20px;
 }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
-#updateTime { font-size: 11px; color: var(--muted); }
-.btn-refresh {
-  background: var(--s2);
-  border: 1px solid var(--border2);
-  color: var(--muted2);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex; align-items: center; gap: 6px;
-  transition: border-color .15s, color .15s;
+.card {
+    background: #1f2937;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
 }
-.btn-refresh:hover { border-color: var(--accent); color: var(--accent); }
-.btn-refresh:disabled { opacity: .4; cursor: not-allowed; }
-.btn-refresh svg { transition: transform .3s; }
-.btn-refresh.spinning svg { animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* TICKER */
-.ticker-wrap {
-  height: 36px; overflow: hidden;
-  background: var(--s1);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center;
+.card a {
+    color: #60a5fa;
+    text-decoration: none;
 }
-.ticker-track {
-  display: flex;
-  animation: ticker 60s linear infinite;
-  white-space: nowrap;
+.metric {
+    display: inline-block;
+    margin-right: 20px;
+    font-size: 14px;
 }
-.ticker-wrap:hover .ticker-track { animation-play-state: paused; }
-@keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-.tick {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 0 18px; height: 36px;
-  border-right: 1px solid var(--border);
-  font-size: 12px;
-}
-.tick-name { color: var(--muted2); font-size: 10px; text-transform: uppercase; letter-spacing: .5px; }
-.tick-val { font-family: 'Syne', sans-serif; font-weight: 600; }
-.up { color: var(--green); }
-.dn { color: var(--red); }
-.neutral { color: var(--muted2); }
-
-/* LAYOUT */
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  min-height: calc(100vh - 88px);
-}
-
-/* FEED */
-.feed { padding: 20px 24px; border-right: 1px solid var(--border); }
-
-.filters {
-  display: flex; gap: 5px; flex-wrap: wrap;
-  align-items: center; margin-bottom: 16px;
-}
-.filter-label { font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin-right: 4px; }
-.fbtn {
-  padding: 4px 13px; border-radius: 999px;
-  border: 1px solid var(--border2);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 11px; color: var(--muted2);
-  background: transparent; cursor: pointer;
-  transition: all .15s;
-}
-.fbtn:hover { color: var(--text); border-color: var(--border2); background: var(--s2); }
-.fbtn.on { background: var(--accent); color: #080808; border-color: var(--accent); font-weight: 500; }
-
-/* NEWS */
-.news-list {
-  display: flex; flex-direction: column;
-  border: 1px solid var(--border);
-  border-radius: 10px; overflow: hidden;
-}
-.nitem {
-  display: grid; grid-template-columns: 1fr auto;
-  gap: 14px; align-items: start;
-  padding: 15px 17px;
-  background: var(--s1);
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  transition: background .12s;
-  text-decoration: none; color: inherit;
-}
-.nitem:last-child { border-bottom: none; }
-.nitem:hover { background: var(--s2); }
-.nitem.feat {
-  grid-template-columns: 1fr;
-  background: var(--s2);
-  border-left: 2px solid var(--accent);
-}
-.nmeta { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; flex-wrap: wrap; }
-.ntag {
-  font-size: 9px; font-weight: 600; letter-spacing: .8px;
-  text-transform: uppercase; padding: 2px 7px; border-radius: 3px;
-}
-.tag-MACRO    { background: var(--blue-bg);   color: var(--blue); }
-.tag-FX       { background: var(--amber-bg);  color: var(--amber); }
-.tag-COMMODITY{ background: var(--green-bg);  color: var(--green); }
-.tag-EQUITY   { background: var(--purple-bg); color: var(--purple); }
-.tag-CONFLICT { background: var(--red-bg);    color: var(--red); }
-.tag-CRYPTO   { background: var(--accent-bg); color: var(--accent); }
-.tag-BUSINESS { background: var(--blue-bg);   color: var(--blue); }
-.tag-OTHER    { background: var(--s3);        color: var(--muted2); }
-.nsrc { font-size: 11px; color: var(--muted); }
-.ntime { font-size: 11px; color: var(--muted); }
-.ntitle {
-  font-family: 'Syne', sans-serif;
-  font-size: 13px; font-weight: 600;
-  color: var(--text); line-height: 1.4;
-  margin-bottom: 4px;
-}
-.nitem.feat .ntitle { font-size: 16px; }
-.ndesc { font-size: 12px; color: var(--muted2); line-height: 1.55; }
-.nimp { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; min-width: 55px; }
-.nimp-lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
-.nbadge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 3px; }
-.imp-HIGH { background: var(--red-bg); color: var(--red); }
-.imp-MED  { background: var(--amber-bg); color: var(--amber); }
-.imp-LOW  { background: var(--s3); color: var(--muted2); }
-
-/* SKELETON */
-.skel-wrap { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-.skel-row { padding: 15px 17px; border-bottom: 1px solid var(--border); }
-.skel-row:last-child { border-bottom: none; }
-.sl {
-  border-radius: 4px;
-  background: var(--s2);
-  animation: shimmer 1.4s ease-in-out infinite alternate;
-}
-@keyframes shimmer { from{opacity:.4} to{opacity:.8} }
-
-/* SIDEBAR */
-.sidebar { padding: 20px 18px; display: flex; flex-direction: column; gap: 22px; overflow-y: auto; }
-.stitle {
-  font-size: 9px; font-weight: 600; letter-spacing: 1px;
-  text-transform: uppercase; color: var(--muted);
-  margin-bottom: 11px;
-  display: flex; align-items: center; gap: 8px;
-}
-.stitle::after { content:''; flex:1; height:1px; background: var(--border); }
-
-/* TEMPERATURE */
-.trow { display: flex; flex-direction: column; gap: 5px; margin-bottom: 11px; }
-.trow:last-child { margin-bottom: 0; }
-.thead { display: flex; justify-content: space-between; font-size: 12px; }
-.tname { color: var(--muted2); }
-.tbar { height: 3px; background: var(--s3); border-radius: 999px; overflow: hidden; margin-top: 2px; }
-.tbar-fill { height: 100%; border-radius: 999px; transition: width .8s ease; }
-
-/* X POSTS */
-.xpost { padding: 10px 0; border-bottom: 1px solid var(--border); }
-.xpost:last-child { border-bottom: none; }
-.xhead { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
-.xav {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: var(--s3); border: 1px solid var(--border2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 9px; font-weight: 700; color: var(--muted2); flex-shrink: 0;
-}
-.xhandle { font-size: 12px; font-weight: 500; color: var(--text); }
-.xtext { font-size: 12px; color: var(--muted2); line-height: 1.45; margin-bottom: 5px; }
-.xstats { display: flex; gap: 10px; font-size: 11px; color: var(--muted); }
-
-/* WATCHLIST */
-.witem {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 10px; background: var(--s2);
-  border-radius: 6px; border: 1px solid var(--border);
-  margin-bottom: 5px;
-}
-.witem:last-child { margin-bottom: 0; }
-.wticker { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; }
-.wprice { font-size: 12px; color: var(--muted2); }
-.wchg { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 3px; }
-.wchg.up  { background: var(--green-bg); color: var(--green); }
-.wchg.dn  { background: var(--red-bg);   color: var(--red); }
-
-/* ERROR */
-.err { padding: 36px 20px; text-align: center; color: var(--muted2); font-size: 13px; }
-.err a { color: var(--accent); }
-
-/* EMPTY */
-.empty { padding: 24px; text-align: center; color: var(--muted); font-size: 13px; }
-
-@media (max-width: 768px) {
-  .layout { grid-template-columns: 1fr; }
-  .sidebar { border-top: 1px solid var(--border); }
-  header { padding: 0 16px; }
-  .feed { padding: 16px; }
-  #updateTime { display: none; }
+.metric strong {
+    display: block;
+    font-size: 18px;
 }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">pulse<em>fin</em></div>
-  <div class="header-right">
-    <div class="live"><span class="live-dot"></span>En vivo</div>
-    <span id="updateTime"></span>
-    <button class="btn-refresh" id="btnRefresh" onclick="loadAll()">
-      <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M10 6A4 4 0 1 1 6 2M6 2l2-2M6 2l2 2"/>
-      </svg>
-      Actualizar
-    </button>
-  </div>
-</header>
-
-<div class="ticker-wrap">
-  <div class="ticker-track" id="tickerTrack">
-    <div class="tick"><span class="tick-name">Cargando</span><span class="tick-val neutral">···</span></div>
-  </div>
+<div class="header">
+    📊 Dashboard Geopolítico: EE.UU vs Irán
 </div>
 
-<div class="layout">
-  <div class="feed">
-    <div class="filters">
-      <span class="filter-label">ver</span>
-      <button class="fbtn on"  onclick="setFilter('all',this)">Todo</button>
-      <button class="fbtn" onclick="setFilter('MACRO',this)">Macro</button>
-      <button class="fbtn" onclick="setFilter('FX',this)">Monedas</button>
-      <button class="fbtn" onclick="setFilter('COMMODITY',this)">Commodities</button>
-      <button class="fbtn" onclick="setFilter('EQUITY',this)">Acciones</button>
-      <button class="fbtn" onclick="setFilter('CONFLICT',this)">Conflictos</button>
-      <button class="fbtn" onclick="setFilter('CRYPTO',this)">Crypto</button>
-    </div>
-    <div id="newsWrap">
-      <div class="skel-wrap">
-        <div class="skel-row"><div class="sl" style="width:70px;height:9px;margin-bottom:9px"></div><div class="sl" style="width:88%;height:13px;margin-bottom:7px"></div><div class="sl" style="width:65%;height:11px"></div></div>
-        <div class="skel-row"><div class="sl" style="width:60px;height:9px;margin-bottom:9px"></div><div class="sl" style="width:92%;height:13px;margin-bottom:7px"></div><div class="sl" style="width:70%;height:11px"></div></div>
-        <div class="skel-row"><div class="sl" style="width:75px;height:9px;margin-bottom:9px"></div><div class="sl" style="width:80%;height:13px;margin-bottom:7px"></div><div class="sl" style="width:60%;height:11px"></div></div>
-        <div class="skel-row"><div class="sl" style="width:65px;height:9px;margin-bottom:9px"></div><div class="sl" style="width:85%;height:13px;margin-bottom:7px"></div><div class="sl" style="width:72%;height:11px"></div></div>
-        <div class="skel-row"><div class="sl" style="width:68px;height:9px;margin-bottom:9px"></div><div class="sl" style="width:78%;height:13px;margin-bottom:7px"></div><div class="sl" style="width:58%;height:11px"></div></div>
-      </div>
-    </div>
-  </div>
+<div class="container">
+    <div class="main">
+        <div class="metric"><strong>ALTO</strong> Riesgo Geopolítico</div>
+        <div class="metric"><strong>↑</strong> Petróleo</div>
+        <div class="metric"><strong>VOL</strong> Volatilidad</div>
 
-  <div class="sidebar">
-    <div>
-      <div class="stitle">Temperatura del mercado</div>
-      <div id="tempWrap">
-        <div class="sl" style="height:10px;margin-bottom:10px;border-radius:4px"></div>
-        <div class="sl" style="height:10px;margin-bottom:10px;border-radius:4px"></div>
-        <div class="sl" style="height:10px;border-radius:4px"></div>
-      </div>
+        <h2>📰 Noticias</h2>
+
+        <div class="card">
+            <h3>Estados Unidos bombardeó otro objetivo en Irán</h3>
+            <a href="https://www.infobae.com/video/eeuu/estados-unidos-bombardeo-otro-objetivo-en-iran/uznNgTD7/" target="_blank">Ver noticia</a>
+        </div>
+
+        <div class="card">
+            <h3>Rechazo al bloqueo en el estrecho de Ormuz</h3>
+            <a href="https://www.infobae.com/espana/2026/04/13/el-gobierno-rechaza-el-bloqueo-naval-estadounidense-en-el-estrecho-de-ormuz-dentro-de-esta-sinrazon-esto-es-un-paso-mas/" target="_blank">Ver noticia</a>
+        </div>
+
+        <div class="card">
+            <h3>Tensiones en energía por el conflicto</h3>
+            <a href="https://www.infobae.com/america/agencias/2026/04/13/cuerpo-avisa-de-tensiones-por-queroseno-si-se-prolonga-la-guerra-pero-destaca-la-menor-dependencia-de-espana/" target="_blank">Ver noticia</a>
+        </div>
+
     </div>
-    <div>
-      <div class="stitle">X — trending</div>
-      <div id="xWrap">
-        <div class="sl" style="height:11px;margin-bottom:8px;border-radius:4px"></div>
-        <div class="sl" style="height:11px;width:75%;border-radius:4px"></div>
-      </div>
+
+    <div class="sidebar">
+        <h3>📅 Timeline</h3>
+        <p>• Bombardeos recientes</p>
+        <p>• Tensión en Ormuz</p>
+        <p>• Impacto en energía</p>
     </div>
-    <div>
-      <div class="stitle">Watchlist</div>
-      <div id="watchWrap">
-        <div class="sl" style="height:34px;margin-bottom:5px;border-radius:6px"></div>
-        <div class="sl" style="height:34px;margin-bottom:5px;border-radius:6px"></div>
-        <div class="sl" style="height:34px;border-radius:6px"></div>
-      </div>
-    </div>
-  </div>
 </div>
 
-<script>
-// ─── RSS FEEDS — traemos todo desde las fuentes, nosotros categorizamos ───────
-const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
-const FEEDS = [
-  { url: 'https://feeds.reuters.com/reuters/businessNews',    source: 'Reuters'       },
-  { url: 'https://feeds.reuters.com/reuters/topNews',         source: 'Reuters'       },
-  { url: 'https://feeds.a.dj.com/rss/RSSMarketsMain.xml',     source: 'WSJ'           },
-  { url: 'https://finance.yahoo.com/news/rssindex',            source: 'Yahoo Finance' },
-  { url: 'https://www.marketwatch.com/rss/topstories',        source: 'MarketWatch'   },
-  { url: 'https://www.investing.com/rss/news.rss',             source: 'Investing.com' },
-  { url: 'https://coindesk.com/arc/outboundfeeds/rss/',       source: 'CoinDesk'      },
-  { url: 'https://www.infobae.com/economia/rss/',             source: 'Infobae'       },
-  { url: 'https://www.cronista.com/rss/',                     source: 'El Cronista'   },
-  { url: 'https://www.ambito.com/rss',                        source: 'Ambito'        },
-  { url: 'https://www.iprofesional.com/rss',                  source: 'iProfesional'  },
-];
-
-let allNews = [];
-let currentFilter = 'all';
-
-// ─── CATEGORIZATION — nuestra lógica, no la de la API ─────────────────────────
-const CAT_RULES = [
-  { cat: 'CRYPTO',    re: /bitcoin|btc|ethereum|eth|crypto|blockchain|binance|solana|coinbase|defi|nft|stablecoin/i },
-  { cat: 'CONFLICT',  re: /war|guerra|conflict|ukraine|russia|israel|iran|gaza|militar|nato|sanction|ataque|bomba|invasion/i },
-  { cat: 'COMMODITY', re: /\bgold\b|silver|oro\b|plata|oil\b|petrol|wti|brent|copper|wheat|trigo|\bsoy\b|soja|commodity|gas\b|alumin|nickel|lithium|litio|corn|maiz/i },
-  { cat: 'FX',        re: /\bdollar\b|\bdolar\b|euro\b|\byen\b|yuan|forex|currency|moneda|exchange rate|tipo de cambio|peso|libra|sterling|emerging market currency/i },
-  { cat: 'EQUITY',    re: /\bstock\b|accion|nasdaq|s&p 500|dow jones|\bshares\b|apple|nvidia|tesla|amazon|alphabet|microsoft|meta\b|earnings|ipo|bolsa|wall street|buyback|dividend/i },
-  { cat: 'MACRO',     re: /inflation|inflacion|\bgdp\b|\bpbi\b|\bfed\b|federal reserve|ecb|banco central|interest rate|recession|cpi|pce|employment|desempleo|treasury|deficit|deuda|debt|imf|world bank|tasa/i },
-];
-
-function detectCategory(title, desc) {
-  const text = (title + ' ' + (desc || '')).toLowerCase();
-  for (const rule of CAT_RULES) {
-    if (rule.re.test(text)) return rule.cat;
-  }
-  return null; // no coincide con nada financiero — la descartamos
-}
-
-function detectImpact(title, desc) {
-  const text = (title + ' ' + (desc || '')).toLowerCase();
-  const high = /crash|crisis|collapse|record|historic|emergency|war|sanctions|ban|plunge|surge|soar|spike|shock|alert|urgent|breaking|riesgo|caida|desplome/i;
-  const low  = /minor|slight|small|gradual|steady|slowly|modestly/i;
-  if (high.test(text)) return 'HIGH';
-  if (low.test(text))  return 'LOW';
-  return 'MED';
-}
-
-function timeAgo(dateStr) {
-  const diff = Math.floor((Date.now() - new Date(dateStr)) / 60000);
-  if (diff < 60)   return diff + 'm';
-  if (diff < 1440) return Math.floor(diff / 60) + 'h';
-  return Math.floor(diff / 1440) + 'd';
-}
-
-function stripHtml(str) {
-  return (str || '').replace(/<[^>]+>/g, '').replace(/&[a-z]+;/gi, ' ').trim();
-}
-
-// ─── FETCH RSS ────────────────────────────────────────────────────────────────
-async function fetchNews() {
-  const results = await Promise.allSettled(
-    FEEDS.map(feed =>
-      fetch(RSS_PROXY + encodeURIComponent(feed.url) + '&count=15')
-        .then(r => r.json())
-        .then(d => ({ items: d.items || [], source: feed.source }))
-    )
-  );
-
-  const seen = new Set();
-  const items = [];
-
-  for (const r of results) {
-    if (r.status !== 'fulfilled') continue;
-    const { items: feedItems, source } = r.value;
-
-    for (const a of feedItems) {
-      const title = stripHtml(a.title || '');
-      const desc  = stripHtml(a.description || a.content || '');
-      if (!title || seen.has(title)) continue;
-
-      // Filtramos solo lo que tiene categoría financiera — sin forzar nada
-      const cat = detectCategory(title, desc);
-      if (!cat) continue;
-
-      seen.add(title);
-      items.push({
-        title,
-        summary:  desc.slice(0, 200) + (desc.length > 200 ? '…' : ''),
-        category: cat,
-        impact:   detectImpact(title, desc),
-        source,
-        time:     timeAgo(a.pubDate),
-        url:      a.link || '#',
-        featured: false,
-      });
-    }
-  }
-
-  // Ordenar: HIGH primero, luego por fuente de calidad
-  const srcWeight = { 'Bloomberg':3, 'WSJ':3, 'Reuters':3, 'FT':2, 'MarketWatch':2, 'Yahoo Finance':2, 'El Cronista':1, 'Infobae':1, 'Ambito':1, 'iProfesional':1, 'Investing.com':1, 'CoinDesk':1 };
-  items.sort((a, b) => {
-    const impA = { HIGH:3, MED:2, LOW:1 }[a.impact];
-    const impB = { HIGH:3, MED:2, LOW:1 }[b.impact];
-    if (impB !== impA) return impB - impA;
-    return (srcWeight[b.source] || 1) - (srcWeight[a.source] || 1);
-  });
-
-  // Marcar el primero HIGH como featured
-  const feat = items.find(i => i.impact === 'HIGH');
-  if (feat) feat.featured = true;
-
-  return items.slice(0, 25);
-}
-
-// ─── TICKER via Yahoo Finance ─────────────────────────────────────────────────
-async function fetchTicker() {
-  try {
-    const symbols = ['^GSPC','^IXIC','^DJI','BTC-USD','ETH-USD','GC=F','CL=F','EURUSD=X'];
-    const enc = symbols.map(encodeURIComponent).join(',');
-    const r = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${enc}&fields=regularMarketPrice,regularMarketChangePercent,shortName`);
-    const d = await r.json();
-    const names = { '^GSPC':'S&P 500', '^IXIC':'NASDAQ', '^DJI':'DOW', 'BTC-USD':'BTC', 'ETH-USD':'ETH', 'GC=F':'Oro', 'CL=F':'WTI', 'EURUSD=X':'EUR/USD' };
-    return (d?.quoteResponse?.result || []).map(q => ({
-      name:   names[q.symbol] || q.symbol,
-      value:  q.regularMarketPrice > 1000
-                ? q.regularMarketPrice.toLocaleString('en-US', {maximumFractionDigits:0})
-                : q.regularMarketPrice?.toFixed(2),
-      change: (q.regularMarketChangePercent >= 0 ? '+' : '') + q.regularMarketChangePercent?.toFixed(2) + '%',
-      up:     q.regularMarketChangePercent >= 0,
-    }));
-  } catch {
-    return [];
-  }
-}
-
-// ─── WATCHLIST via Yahoo Finance ──────────────────────────────────────────────
-async function fetchWatchlist() {
-  try {
-    const symbols = ['AAPL','NVDA','TSLA','GLD','BTC-USD','EURUSD=X'];
-    const enc = symbols.map(encodeURIComponent).join(',');
-    const r = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${enc}&fields=regularMarketPrice,regularMarketChangePercent,symbol`);
-    const d = await r.json();
-    const labels = { 'AAPL':'AAPL','NVDA':'NVDA','TSLA':'TSLA','GLD':'GLD','BTC-USD':'BTC','EURUSD=X':'EUR/USD' };
-    return (d?.quoteResponse?.result || []).map(q => ({
-      ticker: labels[q.symbol] || q.symbol,
-      price:  '$' + (q.regularMarketPrice > 100
-                ? q.regularMarketPrice.toLocaleString('en-US',{maximumFractionDigits:2})
-                : q.regularMarketPrice?.toFixed(4)),
-      change: (q.regularMarketChangePercent>=0?'+':'') + q.regularMarketChangePercent?.toFixed(2)+'%',
-      up:     q.regularMarketChangePercent >= 0,
-    }));
-  } catch {
-    return [];
-  }
-}
-
-// ─── SENTIMIENTO — calculado desde las noticias que trajimos ──────────────────
-function calcSentiment(news) {
-  const total = news.length || 1;
-  const neg = news.filter(n => /crash|crisis|collapse|war|ban|plunge|caida|desplome|recession|sanction/i.test(n.title)).length;
-  const pos = news.filter(n => /surge|soar|jump|record|growth|gain|rise|rally|sube|maxim/i.test(n.title)).length;
-  const negPct  = Math.round((neg / total) * 100);
-  const posPct  = Math.round((pos / total) * 100);
-  const highPct = Math.round((news.filter(n=>n.impact==='HIGH').length / total) * 100);
-  const net = posPct - negPct;
-
-  let label, color;
-  if (net < -25) { label='Muy negativo'; color='#f05555'; }
-  else if (net < 0) { label='Negativo'; color='#f5b840'; }
-  else if (net < 15){ label='Neutral';  color='#8a8780'; }
-  else              { label='Positivo'; color='#50e890'; }
-
-  return {
-    sentiment:   { label, pct: Math.min(100, 50+Math.abs(net)), color },
-    volatility:  { label: highPct>40?'Alta':highPct>20?'Moderada':'Baja', pct: Math.min(100,highPct*2), color: highPct>40?'#f05555':'#f5b840' },
-    negativePct: { pct: negPct },
-  };
-}
-
-// ─── X POSTS — placeholder hasta tener API real ───────────────────────────────
-function getXPosts() {
-  return [
-    { handle:'@zerohedge',      initials:'ZH', text:'Markets in risk-off mode. Macro headwinds piling up — watch the 10Y.',  views:'1.4M', reposts:'38K' },
-    { handle:'@kobeissiletter',  initials:'KL', text:'Gold pushing higher again. Real rates are telling a story right now.',  views:'780K', reposts:'22K' },
-    { handle:'@unusual_whales', initials:'UW', text:'Options flow heavily skewed to puts on SPY. Something big being hedged.', views:'540K', reposts:'14K' },
-  ];
-}
-
-// ─── RENDER ───────────────────────────────────────────────────────────────────
-function renderTicker(items) {
-  if (!items.length) return;
-  const html = items.map(i => `
-    <div class="tick">
-      <span class="tick-name">${i.name}</span>
-      <span class="tick-val ${i.up?'up':'dn'}">${i.value}</span>
-      <span class="${i.up?'up':'dn'}" style="font-size:11px">${i.change}</span>
-    </div>`).join('');
-  document.getElementById('tickerTrack').innerHTML = html + html;
-}
-
-function renderNews(items) {
-  const list = currentFilter === 'all' ? items : items.filter(n => n.category === currentFilter);
-  if (!list.length) {
-    document.getElementById('newsWrap').innerHTML = '<div class="empty">Sin noticias en esta categoría por ahora.</div>';
-    return;
-  }
-  document.getElementById('newsWrap').innerHTML = `
-    <div class="news-list">
-      ${list.map(n => `
-        <a class="nitem${n.featured?' feat':''}" href="${n.url}" target="_blank" rel="noopener">
-          <div>
-            <div class="nmeta">
-              <span class="ntag tag-${n.category}">${n.category}</span>
-              <span class="nsrc">${n.source}</span>
-              <span class="ntime">· hace ${n.time}</span>
-            </div>
-            <div class="ntitle">${n.title}</div>
-            ${n.summary ? `<div class="ndesc">${n.summary}</div>` : ''}
-          </div>
-          ${!n.featured ? `
-          <div class="nimp">
-            <span class="nimp-lbl">impacto</span>
-            <span class="nbadge imp-${n.impact}">${n.impact}</span>
-          </div>` : ''}
-        </a>`).join('')}
-    </div>`;
-  document.getElementById('updateTime').textContent = new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-}
-
-function renderTemp(d) {
-  const rows = [
-    { name:'Sentimiento',        label:d.sentiment.label,     pct:d.sentiment.pct,   color:d.sentiment.color   },
-    { name:'Volatilidad',        label:d.volatility.label,    pct:d.volatility.pct,  color:d.volatility.color  },
-    { name:'Noticias negativas', label:d.negativePct.pct+'%', pct:d.negativePct.pct, color:'#f05555'           },
-  ];
-  document.getElementById('tempWrap').innerHTML = rows.map(r => `
-    <div class="trow">
-      <div class="thead">
-        <span class="tname">${r.name}</span>
-        <span style="font-size:12px;font-weight:500;color:${r.color}">${r.label}</span>
-      </div>
-      <div class="tbar"><div class="tbar-fill" style="width:${r.pct}%;background:${r.color}"></div></div>
-    </div>`).join('');
-}
-
-function renderX(posts) {
-  document.getElementById('xWrap').innerHTML = posts.map(p => `
-    <div class="xpost">
-      <div class="xhead">
-        <div class="xav">${p.initials}</div>
-        <span class="xhandle">${p.handle}</span>
-      </div>
-      <div class="xtext">${p.text}</div>
-      <div class="xstats"><span>${p.views} views</span><span>${p.reposts} reposts</span></div>
-    </div>`).join('');
-}
-
-function renderWatchlist(assets) {
-  if (!assets.length) { document.getElementById('watchWrap').innerHTML = '<div class="empty" style="font-size:12px">No disponible</div>'; return; }
-  document.getElementById('watchWrap').innerHTML = assets.map(a => `
-    <div class="witem">
-      <span class="wticker">${a.ticker}</span>
-      <span class="wprice">${a.price}</span>
-      <span class="wchg ${a.up?'up':'dn'}">${a.change}</span>
-    </div>`).join('');
-}
-
-// ─── FILTER ───────────────────────────────────────────────────────────────────
-function setFilter(cat, btn) {
-  currentFilter = cat;
-  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  renderNews(allNews);
-}
-
-// ─── LOAD ALL ─────────────────────────────────────────────────────────────────
-async function loadAll() {
-  const btn = document.getElementById('btnRefresh');
-  btn.disabled = true;
-  btn.classList.add('spinning');
-
-  try {
-    const [news, ticker, watchlist] = await Promise.all([
-      fetchNews(),
-      fetchTicker(),
-      fetchWatchlist(),
-    ]);
-
-    allNews = news;
-    renderNews(allNews);
-    renderTicker(ticker);
-    renderTemp(calcSentiment(news));
-    renderX(getXPosts());
-    renderWatchlist(watchlist);
-
-  } catch(e) {
-    document.getElementById('newsWrap').innerHTML = `
-      <div class="err">
-        <p>Error: ${e.message}</p>
-        <p style="margin-top:8px;font-size:12px"><a href="#" onclick="loadAll()">Intentar de nuevo</a></p>
-      </div>`;
-  } finally {
-    btn.disabled = false;
-    btn.classList.remove('spinning');
-  }
-}
-
-loadAll();
-</script>
 </body>
 </html>
