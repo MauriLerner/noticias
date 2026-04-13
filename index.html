@@ -1,93 +1,592 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard Conflicto EE.UU - Irán</title>
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0b0f1a;
-    color: #e6e9f0;
-}
-.header {
-    padding: 20px;
-    background: #111827;
-    font-size: 24px;
-    font-weight: bold;
-}
-.container {
-    display: flex;
-}
-.main {
-    flex: 3;
-    padding: 20px;
-}
-.sidebar {
-    flex: 1;
-    background: #0f172a;
-    padding: 20px;
-}
-.card {
-    background: #1f2937;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-}
-.card a {
-    color: #60a5fa;
-    text-decoration: none;
-}
-.metric {
-    display: inline-block;
-    margin-right: 20px;
-    font-size: 14px;
-}
-.metric strong {
-    display: block;
-    font-size: 18px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Radar Geopolítico | EE.UU. - Irán | Infobae</title>
+  <style>
+    :root{
+      --bg:#0a0f1c;
+      --panel:#10182b;
+      --panel-2:#0d1424;
+      --line:#1e2b49;
+      --text:#eef3ff;
+      --muted:#98a7c7;
+      --accent:#4ea1ff;
+      --accent-2:#6ee7ff;
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow: 0 16px 40px rgba(0,0,0,.28);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 500px at 15% -10%, rgba(78,161,255,.18), transparent 50%),
+        radial-gradient(900px 450px at 100% 0%, rgba(110,231,255,.08), transparent 45%),
+        linear-gradient(180deg, #09111f 0%, #0a0f1c 100%);
+      color:var(--text);
+      min-height:100vh;
+    }
+    .wrap{
+      max-width:1400px;
+      margin:0 auto;
+      padding:28px;
+    }
+    .topbar{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:22px;
+      flex-wrap:wrap;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .eyebrow{
+      color:var(--accent-2);
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-size:12px;
+      font-weight:700;
+    }
+    h1{
+      margin:0;
+      font-size:32px;
+      line-height:1.1;
+      letter-spacing:-.02em;
+    }
+    .sub{
+      color:var(--muted);
+      font-size:14px;
+    }
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    button, .pill{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      border-radius:999px;
+      padding:11px 16px;
+      font-size:14px;
+      cursor:pointer;
+      transition:.18s ease;
+      backdrop-filter: blur(8px);
+    }
+    button:hover{
+      border-color:#33548d;
+      transform:translateY(-1px);
+    }
+    .pill{
+      cursor:default;
+      color:var(--muted);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: minmax(0,1.6fr) minmax(320px,.8fr);
+      gap:20px;
+    }
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panel-head{
+      padding:18px 20px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .panel-title{
+      font-size:18px;
+      font-weight:700;
+    }
+    .panel-body{
+      padding:20px;
+    }
+    .metrics{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:14px;
+      margin-bottom:18px;
+    }
+    .metric{
+      background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      min-height:104px;
+    }
+    .metric-label{
+      color:var(--muted);
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:10px;
+    }
+    .metric-value{
+      font-size:30px;
+      font-weight:800;
+      letter-spacing:-.03em;
+    }
+    .metric-sub{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .news-list{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .card{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      border-radius:16px;
+      padding:16px;
+      transition:.18s ease;
+    }
+    .card:hover{
+      transform:translateY(-1px);
+      border-color:#33548d;
+      background:rgba(255,255,255,.03);
+    }
+    .card-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      margin-bottom:10px;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      color:#cde3ff;
+      background:rgba(78,161,255,.10);
+      border:1px solid rgba(78,161,255,.22);
+      white-space:nowrap;
+    }
+    .tag.dot::before{
+      content:"";
+      width:8px;height:8px;border-radius:50%;
+      background:var(--accent-2);
+      display:inline-block;
+      box-shadow:0 0 0 4px rgba(110,231,255,.08);
+    }
+    .headline{
+      margin:0 0 8px 0;
+      font-size:21px;
+      line-height:1.28;
+      letter-spacing:-.02em;
+    }
+    .headline a{
+      color:var(--text);
+      text-decoration:none;
+    }
+    .headline a:hover{
+      color:#b8d6ff;
+    }
+    .summary{
+      color:var(--muted);
+      line-height:1.55;
+      font-size:14px;
+      margin-bottom:10px;
+    }
+    .meta{
+      color:var(--muted);
+      font-size:13px;
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .empty, .error{
+      border:1px dashed var(--line);
+      border-radius:16px;
+      padding:24px;
+      color:var(--muted);
+      background:rgba(255,255,255,.02);
+    }
+    .error{ color:#ffd4d4; border-color: rgba(239,68,68,.28); background: rgba(239,68,68,.05);}
+    .side-section{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .mini-list{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .mini-item{
+      padding:12px 0;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .mini-item:last-child{border-bottom:none}
+    .mini-title{
+      font-size:14px;
+      line-height:1.45;
+      margin-bottom:6px;
+    }
+    .mini-time{
+      color:var(--muted);
+      font-size:12px;
+    }
+    .status{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .status .live{
+      width:10px;height:10px;border-radius:50%;
+      background:var(--good);
+      box-shadow:0 0 0 5px rgba(34,197,94,.10);
+      animation:pulse 1.7s infinite;
+    }
+    @keyframes pulse{
+      0%{transform:scale(1); opacity:1}
+      70%{transform:scale(1.1); opacity:.7}
+      100%{transform:scale(1); opacity:1}
+    }
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.55;
+    }
+    .footer-note{
+      margin-top:16px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.55;
+    }
+    .green{color:var(--good)}
+    .orange{color:var(--warn)}
+    .red{color:var(--bad)}
+    @media (max-width: 1100px){
+      .grid{grid-template-columns:1fr}
+      .metrics{grid-template-columns:repeat(2, minmax(0,1fr))}
+    }
+    @media (max-width: 640px){
+      .wrap{padding:18px}
+      h1{font-size:26px}
+      .metrics{grid-template-columns:1fr}
+      .headline{font-size:18px}
+    }
+  </style>
 </head>
 <body>
-
-<div class="header">
-    📊 Dashboard Geopolítico: EE.UU vs Irán
-</div>
-
-<div class="container">
-    <div class="main">
-        <div class="metric"><strong>ALTO</strong> Riesgo Geopolítico</div>
-        <div class="metric"><strong>↑</strong> Petróleo</div>
-        <div class="metric"><strong>VOL</strong> Volatilidad</div>
-
-        <h2>📰 Noticias</h2>
-
-        <div class="card">
-            <h3>Estados Unidos bombardeó otro objetivo en Irán</h3>
-            <a href="https://www.infobae.com/video/eeuu/estados-unidos-bombardeo-otro-objetivo-en-iran/uznNgTD7/" target="_blank">Ver noticia</a>
-        </div>
-
-        <div class="card">
-            <h3>Rechazo al bloqueo en el estrecho de Ormuz</h3>
-            <a href="https://www.infobae.com/espana/2026/04/13/el-gobierno-rechaza-el-bloqueo-naval-estadounidense-en-el-estrecho-de-ormuz-dentro-de-esta-sinrazon-esto-es-un-paso-mas/" target="_blank">Ver noticia</a>
-        </div>
-
-        <div class="card">
-            <h3>Tensiones en energía por el conflicto</h3>
-            <a href="https://www.infobae.com/america/agencias/2026/04/13/cuerpo-avisa-de-tensiones-por-queroseno-si-se-prolonga-la-guerra-pero-destaca-la-menor-dependencia-de-espana/" target="_blank">Ver noticia</a>
-        </div>
-
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="eyebrow">Radar geopolítico · dashboard en vivo</div>
+        <h1>EE.UU. vs Irán · Titulares de Infobae</h1>
+        <div class="sub">Noticias del día filtradas automáticamente y refrescadas en tiempo real.</div>
+      </div>
+      <div class="controls">
+        <div class="pill" id="sourcePill">Fuente: Infobae vía Google News RSS</div>
+        <button id="refreshBtn">Actualizar ahora</button>
+      </div>
     </div>
 
-    <div class="sidebar">
-        <h3>📅 Timeline</h3>
-        <p>• Bombardeos recientes</p>
-        <p>• Tensión en Ormuz</p>
-        <p>• Impacto en energía</p>
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Titulares hoy</div>
+        <div class="metric-value" id="totalToday">--</div>
+        <div class="metric-sub">Resultados detectados para la fecha actual</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Última nota</div>
+        <div class="metric-value" id="latestTime">--</div>
+        <div class="metric-sub">Hora local Buenos Aires</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Actualización</div>
+        <div class="metric-value" id="lastRefresh">--</div>
+        <div class="metric-sub">Último refresh exitoso</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Estado feed</div>
+        <div class="metric-value green" id="feedStatus">Activo</div>
+        <div class="metric-sub" id="feedStatusSub">Monitoreo cada 60 segundos</div>
+      </div>
     </div>
-</div>
 
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Noticias detectadas</div>
+          <div class="status">
+            <span class="live"></span>
+            <span id="liveStatusText">Buscando titulares...</span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="newsContainer" class="news-list"></div>
+        </div>
+      </div>
+
+      <div class="side-section">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Monitor</div>
+          </div>
+          <div class="panel-body">
+            <div class="mini-list">
+              <div class="mini-item">
+                <div class="mini-title">Filtro aplicado</div>
+                <div class="mini-time">site:infobae.com + (“Estados Unidos” OR “EEUU”) + Irán + conflicto/guerra/Ormuz</div>
+              </div>
+              <div class="mini-item">
+                <div class="mini-title">Frecuencia de actualización</div>
+                <div class="mini-time">Cada 60 segundos</div>
+              </div>
+              <div class="mini-item">
+                <div class="mini-title">Ventana temporal</div>
+                <div class="mini-time">Solo noticias publicadas hoy</div>
+              </div>
+            </div>
+            <div class="footer-note">
+              Este dashboard consulta un feed público y filtra resultados de <strong>Infobae</strong>. Si un día el feed no responde,
+              el panel puede quedar vacío aunque existan notas en el sitio.
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Últimos timestamps</div>
+          </div>
+          <div class="panel-body">
+            <div id="timeline" class="mini-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const REFRESH_MS = 60000;
+  const tz = 'America/Argentina/Buenos_Aires';
+
+  const searchQuery = 'site:infobae.com ("Estados Unidos" OR EEUU OR EE.UU.) Irán (conflicto OR guerra OR Ormuz)';
+  const googleRssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(searchQuery)}&hl=es-419&gl=AR&ceid=AR:es-419`;
+  const rssToJsonUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(googleRssUrl)}`;
+
+  const newsContainer = document.getElementById('newsContainer');
+  const timeline = document.getElementById('timeline');
+  const totalToday = document.getElementById('totalToday');
+  const latestTime = document.getElementById('latestTime');
+  const lastRefresh = document.getElementById('lastRefresh');
+  const feedStatus = document.getElementById('feedStatus');
+  const feedStatusSub = document.getElementById('feedStatusSub');
+  const liveStatusText = document.getElementById('liveStatusText');
+  const refreshBtn = document.getElementById('refreshBtn');
+
+  function formatTime(date){
+    return new Intl.DateTimeFormat('es-AR', {
+      timeZone: tz,
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  }
+
+  function formatDateTime(date){
+    return new Intl.DateTimeFormat('es-AR', {
+      timeZone: tz,
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  }
+
+  function getYMDInTZ(date){
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: tz,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).formatToParts(date);
+    const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
+    return `${map.year}-${map.month}-${map.day}`;
+  }
+
+  function stripHtml(html){
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html || '';
+    return (tmp.textContent || tmp.innerText || '').trim();
+  }
+
+  function summaryText(item){
+    const source = stripHtml(item.description || '');
+    if (!source) return 'Sin resumen disponible.';
+    return source.length > 220 ? source.slice(0, 217) + '...' : source;
+  }
+
+  function cleanLink(url){
+    try{
+      const u = new URL(url);
+      return u.href;
+    }catch{
+      return url;
+    }
+  }
+
+  function isInfobae(item){
+    const hay = `${item.link || ''} ${item.title || ''}`.toLowerCase();
+    return hay.includes('infobae.com');
+  }
+
+  function isRelevant(item){
+    const hay = `${item.title || ''} ${stripHtml(item.description || '')}`.toLowerCase();
+    const hasIran = hay.includes('irán') || hay.includes('iran');
+    const hasUs = hay.includes('eeuu') || hay.includes('ee.uu') || hay.includes('estados unidos');
+    const hasConflict = ['conflicto','guerra','ormuz','bloqueo','amenaz','bombarde','ataque','negociac'].some(k => hay.includes(k));
+    return hasIran && hasUs && hasConflict;
+  }
+
+  function isTodayInBA(date){
+    return getYMDInTZ(date) === getYMDInTZ(new Date());
+  }
+
+  function renderTimeline(items){
+    if (!items.length){
+      timeline.innerHTML = `<div class="empty">Sin timestamps para mostrar hoy.</div>`;
+      return;
+    }
+    timeline.innerHTML = items.slice(0,6).map(item => {
+      const d = new Date(item.pubDate);
+      return `
+        <div class="mini-item">
+          <div class="mini-title">${item.title}</div>
+          <div class="mini-time">${formatDateTime(d)}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderNews(items){
+    if (!items.length){
+      newsContainer.innerHTML = `<div class="empty">No encontré titulares de hoy en Infobae para este conflicto. Puede ser por falta de publicaciones nuevas o por demora del feed.</div>`;
+      return;
+    }
+
+    newsContainer.innerHTML = items.map((item, idx) => {
+      const d = new Date(item.pubDate);
+      const summary = summaryText(item);
+      const link = cleanLink(item.link);
+      return `
+        <article class="card">
+          <div class="card-top">
+            <div class="tag dot">Infobae · ${idx === 0 ? 'Más reciente' : 'Titular detectado'}</div>
+            <div class="tag">${formatTime(d)}</div>
+          </div>
+          <h3 class="headline">
+            <a href="${link}" target="_blank" rel="noopener noreferrer">${item.title}</a>
+          </h3>
+          <div class="summary">${summary}</div>
+          <div class="meta">
+            <span>Publicado: ${formatDateTime(d)}</span>
+            <span>Fuente: feed público</span>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  function setOkState(){
+    feedStatus.textContent = 'Activo';
+    feedStatus.className = 'metric-value green';
+    feedStatusSub.textContent = 'Monitoreo cada 60 segundos';
+  }
+
+  function setWarnState(msg){
+    feedStatus.textContent = 'Parcial';
+    feedStatus.className = 'metric-value orange';
+    feedStatusSub.textContent = msg;
+  }
+
+  function setErrorState(msg){
+    feedStatus.textContent = 'Error';
+    feedStatus.className = 'metric-value red';
+    feedStatusSub.textContent = msg;
+  }
+
+  async function loadNews(){
+    liveStatusText.textContent = 'Actualizando titulares...';
+    try{
+      const res = await fetch(rssToJsonUrl, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (!data || !Array.isArray(data.items)) throw new Error('Respuesta inválida del feed');
+
+      const filtered = data.items
+        .filter(isInfobae)
+        .filter(isRelevant)
+        .map(item => ({ ...item, _d: new Date(item.pubDate) }))
+        .filter(item => !isNaN(item._d))
+        .filter(item => isTodayInBA(item._d))
+        .sort((a,b) => b._d - a._d);
+
+      const dedup = [];
+      const seen = new Set();
+      for (const item of filtered){
+        const key = (item.title || '').trim().toLowerCase();
+        if (!seen.has(key)){
+          seen.add(key);
+          dedup.push(item);
+        }
+      }
+
+      renderNews(dedup);
+      renderTimeline(dedup);
+      totalToday.textContent = dedup.length;
+      latestTime.textContent = dedup[0] ? formatTime(dedup[0]._d) : '--';
+      lastRefresh.textContent = formatTime(new Date());
+      liveStatusText.textContent = dedup.length
+        ? `Mostrando ${dedup.length} titular${dedup.length === 1 ? '' : 'es'} de hoy`
+        : 'Sin titulares nuevos detectados hoy';
+      dedup.length ? setOkState() : setWarnState('Feed activo, sin resultados del día');
+    }catch(err){
+      console.error(err);
+      newsContainer.innerHTML = `
+        <div class="error">
+          No pude actualizar el feed en este intento. Error detectado: ${err.message}.<br><br>
+          Probá nuevamente con el botón “Actualizar ahora”.
+        </div>`;
+      timeline.innerHTML = `<div class="empty">Sin datos por el momento.</div>`;
+      totalToday.textContent = '--';
+      latestTime.textContent = '--';
+      lastRefresh.textContent = formatTime(new Date());
+      liveStatusText.textContent = 'Error al consultar el feed';
+      setErrorState('No se pudo leer el feed ahora');
+    }
+  }
+
+  refreshBtn.addEventListener('click', loadNews);
+  loadNews();
+  setInterval(loadNews, REFRESH_MS);
+</script>
 </body>
 </html>
