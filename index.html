@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Radar Geopolítico | Infobae en vivo</title>
+  <title>Radar Geopolítico | Infobae Live v3</title>
   <style>
     :root{
       --bg:#0a0f1c; --panel:#10182b; --line:#1e2b49; --text:#eef3ff; --muted:#98a7c7;
@@ -20,11 +20,11 @@
         linear-gradient(180deg, #09111f 0%, #0a0f1c 100%);
       min-height:100vh;
     }
-    .wrap{max-width:1450px; margin:0 auto; padding:28px;}
+    .wrap{max-width:1480px; margin:0 auto; padding:28px;}
     .topbar{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:20px;}
     .eyebrow{color:var(--accent2); text-transform:uppercase; letter-spacing:.18em; font-size:12px; font-weight:700; margin-bottom:8px;}
     h1{margin:0; font-size:32px; line-height:1.1; letter-spacing:-.02em;}
-    .sub{margin-top:8px; color:var(--muted); font-size:14px;}
+    .sub{margin-top:8px; color:var(--muted); font-size:14px; max-width:820px;}
     .controls{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
     button,.pill{
       border:1px solid var(--line); background:rgba(255,255,255,.03); color:var(--text);
@@ -33,16 +33,16 @@
     button{cursor:pointer}
     button:hover{border-color:#33548d}
     .pill{color:var(--muted)}
-    .metrics{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px;}
+    .metrics{display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:18px;}
     .metric,.panel{
       background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
       border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
     }
     .metric{padding:16px; min-height:104px;}
     .metric-label{color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px;}
-    .metric-value{font-size:30px; font-weight:800; letter-spacing:-.03em;}
+    .metric-value{font-size:28px; font-weight:800; letter-spacing:-.03em;}
     .metric-sub{margin-top:8px; color:var(--muted); font-size:13px;}
-    .grid{display:grid; grid-template-columns:minmax(0,1.7fr) minmax(320px,.8fr); gap:20px;}
+    .grid{display:grid; grid-template-columns:minmax(0,1.8fr) minmax(360px,.8fr); gap:20px;}
     .panel-head{padding:18px 20px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;}
     .panel-title{font-size:18px; font-weight:700;}
     .panel-body{padding:20px;}
@@ -66,7 +66,8 @@
     .empty,.error{border:1px dashed var(--line); border-radius:16px; padding:24px; color:var(--muted); background:rgba(255,255,255,.02);}
     .error{color:#ffd4d4; border-color:rgba(239,68,68,.28); background:rgba(239,68,68,.05);}
     .green{color:var(--good)} .orange{color:var(--warn)} .red{color:var(--bad)}
-    @media (max-width:1100px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    @media (max-width:1200px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
     @media (max-width:640px){.wrap{padding:18px} h1{font-size:26px} .metrics{grid-template-columns:1fr} .headline{font-size:18px}}
   </style>
 </head>
@@ -74,12 +75,12 @@
   <div class="wrap">
     <div class="topbar">
       <div>
-        <div class="eyebrow">Dashboard financiero · noticias en vivo</div>
-        <h1>Conflicto EE.UU. – Irán · Infobae</h1>
-        <div class="sub">Búsqueda ampliada y refresco automático con múltiples consultas paralelas.</div>
+        <div class="eyebrow">Dashboard financiero · versión más robusta</div>
+        <h1>Conflicto EE.UU. – Irán · Titulares de Infobae</h1>
+        <div class="sub">Esta versión consulta varios feeds RSS de Google News filtrados a <strong>site:infobae.com</strong>, los trae vía proxy CORS y parsea XML directo en el navegador. Incluye panel de diagnóstico para saber si realmente entran ítems.</div>
       </div>
       <div class="controls">
-        <div class="pill">Fuente: Google News RSS filtrado a Infobae</div>
+        <div class="pill">Refresh: 45s</div>
         <button id="refreshBtn">Actualizar ahora</button>
       </div>
     </div>
@@ -88,7 +89,7 @@
       <div class="metric">
         <div class="metric-label">Titulares hoy</div>
         <div class="metric-value" id="totalToday">--</div>
-        <div class="metric-sub">Noticias detectadas para hoy</div>
+        <div class="metric-sub">Resultados finales visibles</div>
       </div>
       <div class="metric">
         <div class="metric-label">Última nota</div>
@@ -98,12 +99,17 @@
       <div class="metric">
         <div class="metric-label">Última actualización</div>
         <div class="metric-value" id="lastRefresh">--</div>
-        <div class="metric-sub">Refresh del dashboard</div>
+        <div class="metric-sub">Refresh del panel</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Feeds consultados</div>
+        <div class="metric-value" id="feedsCount">7</div>
+        <div class="metric-sub">Consultas paralelas</div>
       </div>
       <div class="metric">
         <div class="metric-label">Estado feed</div>
         <div class="metric-value green" id="feedStatus">Activo</div>
-        <div class="metric-sub" id="feedStatusSub">Monitoreo cada 45 segundos</div>
+        <div class="metric-sub" id="feedStatusSub">Esperando primera carga</div>
       </div>
     </div>
 
@@ -119,12 +125,19 @@
       </div>
 
       <div class="panel">
-        <div class="panel-head"><div class="panel-title">Monitor</div></div>
+        <div class="panel-head"><div class="panel-title">Diagnóstico</div></div>
         <div class="panel-body">
-          <div class="mini-list" id="timeline"></div>
+          <div id="timeline" class="mini-list"></div>
           <div class="small" style="margin-top:14px">
-            Se usan varias búsquedas para capturar notas de Infobae aunque cambien los títulos:
-            Irán + EEUU, Ormuz, petróleo, Trump, negociaciones, bloqueo.
+            <strong>Qué mirar si vuelve a quedar vacío:</strong><br>
+            1) <em>Ítems crudos</em>: si está en 0, falló el fetch/proxy.<br>
+            2) <em>Infobae detectado</em>: si está en 0, Google no devolvió Infobae.<br>
+            3) <em>Hoy</em>: si está en 0, el problema puede ser de zona horaria o timing.<br>
+            4) <em>Final</em>: si está en 0, el filtro sigue siendo demasiado estricto.
+          </div>
+          <div class="small" style="margin-top:14px">
+            Proxy principal: <code>allorigins.win</code><br>
+            Fallback: <code>allorigins.win/get</code>
           </div>
         </div>
       </div>
@@ -138,27 +151,28 @@ const tz = 'America/Argentina/Buenos_Aires';
 const queries = [
   'site:infobae.com Irán EEUU',
   'site:infobae.com Irán "Estados Unidos"',
-  'site:infobae.com Irán Ormuz Infobae',
-  'site:infobae.com Irán Trump Infobae',
-  'site:infobae.com Irán petróleo Infobae',
-  'site:infobae.com Irán negociaciones EEUU Infobae',
-  'site:infobae.com Irán bloqueo Ormuz Infobae'
+  'site:infobae.com Irán Ormuz',
+  'site:infobae.com Irán Trump',
+  'site:infobae.com Irán petróleo',
+  'site:infobae.com Irán negociaciones EEUU',
+  'site:infobae.com Irán bloqueo Ormuz'
 ];
 
-const rssEndpoints = queries.map(q => {
-  const rss = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=es-419&gl=AR&ceid=AR:es-419`;
-  return `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rss)}`;
-});
+const rssUrls = queries.map(q =>
+  `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=es-419&gl=AR&ceid=AR:es-419`
+);
 
 const newsContainer = document.getElementById('newsContainer');
 const timeline = document.getElementById('timeline');
 const totalToday = document.getElementById('totalToday');
 const latestTime = document.getElementById('latestTime');
 const lastRefresh = document.getElementById('lastRefresh');
+const feedsCount = document.getElementById('feedsCount');
 const feedStatus = document.getElementById('feedStatus');
 const feedStatusSub = document.getElementById('feedStatusSub');
 const liveStatusText = document.getElementById('liveStatusText');
 const refreshBtn = document.getElementById('refreshBtn');
+feedsCount.textContent = String(queries.length);
 
 function formatTime(date){
   return new Intl.DateTimeFormat('es-AR',{timeZone:tz,hour:'2-digit',minute:'2-digit'}).format(date);
@@ -176,27 +190,10 @@ function stripHtml(html){
   tmp.innerHTML = html || '';
   return (tmp.textContent || tmp.innerText || '').trim();
 }
-function summaryText(item){
-  const txt = stripHtml(item.description || '');
-  if (!txt) return 'Sin resumen disponible.';
-  return txt.length > 220 ? txt.slice(0,217) + '...' : txt;
+function textOf(node, tag){
+  return node.querySelector(tag)?.textContent?.trim() || '';
 }
-function isInfobae(item){
-  const hay = `${item.link || ''} ${item.title || ''}`.toLowerCase();
-  return hay.includes('infobae.com');
-}
-function isConflictRelated(item){
-  const hay = `${item.title || ''} ${stripHtml(item.description || '')}`.toLowerCase();
-  const iran = hay.includes('irán') || hay.includes('iran');
-  const us = hay.includes('eeuu') || hay.includes('ee.uu') || hay.includes('estados unidos') || hay.includes('trump');
-  const themes = ['ormuz','bloqueo','guerra','conflicto','negoci','petrole','amenaz','ataque','bombarde','nuclear'];
-  const thematic = themes.some(k => hay.includes(k));
-  return iran && us && thematic;
-}
-function isTodayInBA(date){
-  return getYMDInTZ(date) === getYMDInTZ(new Date());
-}
-function setOkState(msg='Monitoreo cada 45 segundos'){
+function setOkState(msg){
   feedStatus.textContent = 'Activo';
   feedStatus.className = 'metric-value green';
   feedStatusSub.textContent = msg;
@@ -211,21 +208,62 @@ function setErrorState(msg){
   feedStatus.className = 'metric-value red';
   feedStatusSub.textContent = msg;
 }
-function renderTimeline(items){
-  if (!items.length){
-    timeline.innerHTML = `<div class="empty">Sin timestamps para mostrar.</div>`;
-    return;
-  }
-  timeline.innerHTML = items.slice(0,8).map(item => `
-    <div class="mini-item">
-      <div class="mini-title">${item.title}</div>
-      <div class="mini-time">${formatDateTime(item._d)}</div>
-    </div>
-  `).join('');
+
+function parseRssXml(xmlText){
+  const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+  const items = [...doc.querySelectorAll('item')];
+  return items.map(item => ({
+    title: textOf(item, 'title'),
+    link: textOf(item, 'link'),
+    pubDate: textOf(item, 'pubDate'),
+    description: textOf(item, 'description')
+  }));
+}
+
+async function fetchRssViaProxy(rssUrl){
+  const raw1 = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
+  const raw2 = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+  try{
+    const r1 = await fetch(raw1, {cache:'no-store'});
+    if (r1.ok){
+      const txt = await r1.text();
+      if (txt && txt.includes('<rss')) return parseRssXml(txt);
+    }
+  }catch(e){}
+  try{
+    const r2 = await fetch(raw2, {cache:'no-store'});
+    if (r2.ok){
+      const j = await r2.json();
+      const txt = j.contents || '';
+      if (txt && txt.includes('<rss')) return parseRssXml(txt);
+    }
+  }catch(e){}
+  return [];
+}
+
+function isInfobae(item){
+  const hay = `${item.link || ''} ${item.title || ''}`.toLowerCase();
+  return hay.includes('infobae.com');
+}
+function isConflictRelated(item){
+  const hay = `${item.title || ''} ${stripHtml(item.description || '')}`.toLowerCase();
+  const iran = hay.includes('irán') || hay.includes('iran');
+  const us = hay.includes('eeuu') || hay.includes('ee.uu') || hay.includes('estados unidos') || hay.includes('trump');
+  const themes = ['ormuz','bloqueo','guerra','conflicto','negoci','petrole','amenaz','ataque','bombarde','nuclear','estrecho'];
+  const thematic = themes.some(k => hay.includes(k));
+  return iran && us && thematic;
+}
+function isTodayInBA(date){
+  return getYMDInTZ(date) === getYMDInTZ(new Date());
+}
+function summaryText(item){
+  const txt = stripHtml(item.description || '');
+  if (!txt) return 'Sin resumen disponible.';
+  return txt.length > 220 ? txt.slice(0,217) + '...' : txt;
 }
 function renderNews(items){
   if (!items.length){
-    newsContainer.innerHTML = `<div class="empty">No encontré resultados con el filtro del día. Probá actualizar o revisar la conectividad del feed.</div>`;
+    newsContainer.innerHTML = `<div class="empty">No aparecieron noticias en el filtro final. Mirá el panel de diagnóstico para ver en qué etapa se vació.</div>`;
     return;
   }
   newsContainer.innerHTML = items.map((item, idx) => `
@@ -238,40 +276,61 @@ function renderNews(items){
       <div class="summary">${summaryText(item)}</div>
       <div class="meta">
         <span>Publicado: ${formatDateTime(item._d)}</span>
-        <span>Feed público</span>
+        <span>Fuente: RSS público</span>
       </div>
     </article>
   `).join('');
 }
+function renderDiag(stats, items){
+  const top = items.slice(0,5).map(item => `
+    <div class="mini-item">
+      <div class="mini-title">${item.title}</div>
+      <div class="mini-time">${formatDateTime(item._d)}</div>
+    </div>
+  `).join('') || `<div class="mini-item"><div class="mini-title">Sin titulares finales todavía</div></div>`;
 
-async function fetchOne(url){
-  try{
-    const res = await fetch(url, {cache:'no-store'});
-    if (!res.ok) return [];
-    const data = await res.json();
-    return Array.isArray(data.items) ? data.items : [];
-  }catch{
-    return [];
-  }
+  timeline.innerHTML = `
+    <div class="mini-item">
+      <div class="mini-title">Ítems crudos</div>
+      <div class="mini-time">${stats.raw}</div>
+    </div>
+    <div class="mini-item">
+      <div class="mini-title">Infobae detectado</div>
+      <div class="mini-time">${stats.infobae}</div>
+    </div>
+    <div class="mini-item">
+      <div class="mini-title">Relacionados al conflicto</div>
+      <div class="mini-time">${stats.related}</div>
+    </div>
+    <div class="mini-item">
+      <div class="mini-title">Publicados hoy</div>
+      <div class="mini-time">${stats.today}</div>
+    </div>
+    <div class="mini-item">
+      <div class="mini-title">Final deduplicado</div>
+      <div class="mini-time">${stats.final}</div>
+    </div>
+    ${top}
+  `;
 }
 
 async function loadNews(){
-  liveStatusText.textContent = 'Actualizando titulares...';
+  liveStatusText.textContent = 'Consultando feeds...';
   try{
-    const batches = await Promise.all(rssEndpoints.map(fetchOne));
-    const merged = batches.flat();
+    const batches = await Promise.all(rssUrls.map(fetchRssViaProxy));
+    const raw = batches.flat();
 
-    const filtered = merged
-      .filter(isInfobae)
-      .filter(isConflictRelated)
+    const stepInfobae = raw.filter(isInfobae);
+    const stepRelated = stepInfobae.filter(isConflictRelated);
+    const dated = stepRelated
       .map(item => ({...item, _d:new Date(item.pubDate)}))
-      .filter(item => !isNaN(item._d))
-      .filter(item => isTodayInBA(item._d))
+      .filter(item => !isNaN(item._d));
+    const stepToday = dated.filter(item => isTodayInBA(item._d))
       .sort((a,b) => b._d - a._d);
 
     const dedup = [];
     const seen = new Set();
-    for (const item of filtered){
+    for (const item of stepToday){
       const key = ((item.title || '') + '|' + (item.link || '')).trim().toLowerCase();
       if (!seen.has(key)){
         seen.add(key);
@@ -280,29 +339,40 @@ async function loadNews(){
     }
 
     renderNews(dedup);
-    renderTimeline(dedup);
+    renderDiag({
+      raw: raw.length,
+      infobae: stepInfobae.length,
+      related: stepRelated.length,
+      today: stepToday.length,
+      final: dedup.length
+    }, dedup);
+
     totalToday.textContent = dedup.length;
     latestTime.textContent = dedup[0] ? formatTime(dedup[0]._d) : '--';
     lastRefresh.textContent = formatTime(new Date());
 
-    if (merged.length === 0){
-      liveStatusText.textContent = 'El feed no devolvió datos';
-      setErrorState('Sin respuesta del feed');
+    if (raw.length === 0){
+      liveStatusText.textContent = 'Cero ítems crudos';
+      setErrorState('El proxy no devolvió feeds');
+    } else if (stepInfobae.length === 0){
+      liveStatusText.textContent = 'Sin resultados de Infobae';
+      setWarnState('Google no devolvió Infobae en esta tanda');
     } else if (dedup.length === 0){
-      liveStatusText.textContent = 'Feed activo, sin match en el filtro';
-      setWarnState(`Se consultaron ${merged.length} ítems, sin resultados finales`);
+      liveStatusText.textContent = 'Feed activo, filtro final vacío';
+      setWarnState('Hay datos, pero no pasan el filtro final');
     } else {
       liveStatusText.textContent = `Mostrando ${dedup.length} titular${dedup.length === 1 ? '' : 'es'} de hoy`;
-      setOkState(`Consultas paralelas: ${queries.length}`);
+      setOkState(`Feeds OK · ${raw.length} ítems crudos`);
     }
   }catch(err){
-    newsContainer.innerHTML = `<div class="error">No pude actualizar el feed en este intento.</div>`;
-    timeline.innerHTML = `<div class="empty">Sin datos.</div>`;
+    console.error(err);
+    newsContainer.innerHTML = `<div class="error">Falló la actualización general del dashboard.</div>`;
     totalToday.textContent = '--';
     latestTime.textContent = '--';
     lastRefresh.textContent = formatTime(new Date());
-    liveStatusText.textContent = 'Error al consultar el feed';
-    setErrorState('Fallo general de actualización');
+    renderDiag({raw:0, infobae:0, related:0, today:0, final:0}, []);
+    liveStatusText.textContent = 'Error general';
+    setErrorState('No se pudo completar la carga');
   }
 }
 
